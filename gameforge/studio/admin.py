@@ -14,18 +14,18 @@ class LocationInline(admin.TabularInline):
 
 @admin.register(GameConcept)
 class GameConceptAdmin(admin.ModelAdmin):
-    list_display = ['title', 'genre', 'owner', 'created_at']
-    list_filter = ['genre', 'created_at']
-    search_fields = ['title', 'themes', 'owner__username']
+    list_display = ['title', 'genre', 'creator', 'is_public', 'created_at']
+    list_filter = ['genre', 'is_public', 'created_at']
+    search_fields = ['title', 'keywords', 'creatorusername']
     inlines = [CharacterInline, LocationInline]
-    readonly_fields = ['created_at']
+    readonly_fields = ['created_at', 'updated_at']
 
 
 @admin.register(Character)
 class CharacterAdmin(admin.ModelAdmin):
     list_display = ['name', 'role', 'game_concept']
     list_filter = ['role']
-    search_fields = ['name', 'game_concept__title']
+    search_fields = ['name', 'game_concepttitle']
 
 
 @admin.register(Location)
