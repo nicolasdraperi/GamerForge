@@ -18,7 +18,7 @@ def get_pipe():
         tok = AutoTokenizer.from_pretrained(_MODEL_NAME)
         model = AutoModelForSeq2SeqLM.from_pretrained(_MODEL_NAME)
         return pipeline(
-            "text2text-generation",   # <-- clé du problème
+            "text2text-generation",
             model=model,
             tokenizer=tok,
             device=device,
