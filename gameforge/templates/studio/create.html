@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Créer un Jeu - GameForge{% endblock %}
+
+{% block content %}
+<div class="form-container" style="max-width: 900px;">
+  <div class="form-header">
+    <h2>🎨 Créateur de Jeu Vidéo</h2>
+    <p style="color: var(--text-gray);">Remplissez le formulaire et laissez l'IA créer votre concept de jeu</p>
+  </div>
+
+  <form method="POST" id="createGameForm">
+    {% csrf_token %}
+    
+    <div class="form-group">
+      <label for="title">Titre du jeu</label>
+      <input 
+        type="text" 
+        id="title" 
+        name="title" 
+        placeholder="Ex: The Last Guardian"
+        required
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="genre">Genre</label>
+      <select id="genre" name="genre" required>
+        <option value="">-- Sélectionnez un genre --</option>
+        {% for value, label in genre_choices %}
+          <option value="{{ value }}">{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="theme">Thème / Ambiance</label>
+      <textarea 
+        id="theme" 
+        name="theme" 
+        placeholder="Ex: Un monde post-apocalyptique où la nature a repris ses droits..."
+        rows="4"
+      ></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="keywords">Mots-clés thématiques</label>
+      <input 
+        type="text" 
+        id="keywords" 
+        name="keywords" 
+        placeholder="Ex: boucle temporelle, vengeance, IA rebelle"
+      >
+      <small style="color: var(--text-gray); font-size: 0.875rem;">
+        Séparez les mots-clés par des virgules
+      </small>
+    </div>
+
+    <div style="display: flex; gap: 1rem;">
+      <button type="submit" class="btn btn-primary" style="flex: 1;">
+        ✨ Générer le concept
+      </button>
+      <a href="{% url 'home' %}" class="btn btn-secondary">
+        Annuler
+      </a>
+    </div>
+  </form>
+
+  <div id="loadingIndicator" style="display: none; text-align: center; margin-top: 2rem;">
+    <div style="font-size: 3rem; animation: spin 2s linear infinite;">⚙️</div>
+    <p style="color: var(--accent-gold); font-size: 1.25rem; margin-top: 1rem;">
+      Génération en cours... L'IA travaille sur votre concept !
+    </p>
+  </div>
+</div>
+
+<style>
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+</style>
+
+<script>
+  document.getElementById('createGameForm').addEventListener('submit', function() {
+    document.getElementById('loadingIndicator').style.display = 'block';
+    this.style.display = 'none';
+  });
+</script>
+{% endblock %}
+

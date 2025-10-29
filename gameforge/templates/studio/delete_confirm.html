@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Supprimer {{ game.title }} - GameForge{% endblock %}
+
+{% block content %}
+<div class="form-container">
+  <div class="form-header">
+    <h2 style="color: #ef4444;">🗑️ Confirmer la suppression</h2>
+    <p style="color: var(--text-gray);">Cette action est irréversible</p>
+  </div>
+
+  <div style="background: var(--bg-input); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem; border: 1px solid var(--border-color);">
+    <h3 style="color: var(--accent-gold); margin-bottom: 0.5rem;">{{ game.title }}</h3>
+    <p style="color: var(--text-gray);">Genre : {{ game.genre }}</p>
+    <p style="color: var(--text-gray); font-size: 0.875rem;">Créé le {{ game.created_at|date:"d M Y" }}</p>
+  </div>
+
+  <p style="color: var(--text-light); margin-bottom: 2rem; text-align: center;">
+    Êtes-vous sûr de vouloir supprimer ce jeu ? Toutes les données associées (personnages, lieux, etc.) seront également supprimées.
+  </p>
+
+  <form method="POST" style="display: flex; gap: 1rem;">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary" style="flex: 1; background: #ef4444;">
+      Oui, supprimer
+    </button>
+    <a href="{% url 'dashboard' %}" class="btn btn-secondary" style="flex: 1;">
+      Annuler
+    </a>
+  </form>
+</div>
+{% endblock %}
+

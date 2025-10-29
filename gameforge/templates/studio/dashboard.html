@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Mes Projets - GameForge{% endblock %}
+
+{% block content %}
+<div class="hero" style="padding: 2rem;">
+  <h1>📁 Mes Projets</h1>
+  <p>Gérez tous vos concepts de jeux vidéo</p>
+  <a href="{% url 'create_game' %}" class="btn btn-primary">➕ Créer un nouveau jeu</a>
+</div>
+
+{% if user_games %}
+  <div style="margin-bottom: 2rem;">
+    <h2 style="color: var(--accent-gold);">Vous avez {{ user_games|length }} projet{{ user_games|length|pluralize }}</h2>
+  </div>
+
+  <div class="games-grid">
+    {% for game in user_games %}
+      <article class="game-card">
+        {% if game.cover_image %}
+          <img src="{{ game.cover_image.url }}" alt="{{ game.title }}" class="game-card-image">
+        {% else %}
+          <div class="game-card-image"></div>
+        {% endif %}
+        
+        <div class="game-card-content">
+          <div style="display: flex; justify-content: space-between; align-items: start;">
+            <h3 class="game-card-title">{{ game.title }}</h3>
+            {% if game.is_public %}
+              <span style="color: #22c55e; font-size: 0.875rem;">🔓 Public</span>
+            {% else %}
+              <span style="color: #ef4444; font-size: 0.875rem;">🔒 Privé</span>
+            {% endif %}
+          </div>
+          
+          <span class="game-card-genre">{{ game.genre }}</span>
+          <p class="game-card-description">
+            {{ game.universe_description|truncatewords:20 }}
+          </p>
+          
+          <div style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;">
+            <a href="{% url 'game_detail' game.id %}" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
+              👁️ Voir
+            </a>
+            <form method="POST" action="{% url 'toggle_visibility' game.id %}" style="display: inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
+                {% if game.is_public %}🔒 Rendre privé{% else %}🔓 Rendre public{% endif %}
+              </button>
+            </form>
+            <a href="{% url 'delete_game' game.id %}" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem; color: #ef4444;">
+              🗑️ Supprimer
+            </a>
+          </div>
+          
+          <div class="game-card-footer" style="margin-top: 1rem;">
+            <span style="color: var(--text-gray); font-size: 0.875rem;">
+              📅 {{ game.created_at|date:"d M Y" }}
+            </span>
+            <span style="color: var(--accent-gold);">❤️ {{ game.favorite_count }}</span>
+          </div>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+{% else %}
+  <div style="text-align: center; padding: 4rem; background: var(--bg-card); border-radius: 16px;">
+    <div style="font-size: 4rem; margin-bottom: 1rem;">🎮</div>
+    <h3 style="color: var(--accent-gold); margin-bottom: 1rem;">Aucun projet pour le moment</h3>
+    <p style="color: var(--text-gray); margin-bottom: 2rem;">
+      Créez votre premier concept de jeu vidéo avec l'aide de l'IA !
+    </p>
+    <a href="{% url 'create_game' %}" class="btn btn-primary">✨ Créer mon premier jeu</a>
+  </div>
+{% endif %}
+{% endblock %}
+
