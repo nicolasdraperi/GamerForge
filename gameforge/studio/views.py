@@ -1,44 +1,120 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status, permissions
-from .models import GameConcept
-from .services.ai_generator import generate_concept_sections
+from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.db.models import Q
+from .models import GameConcept, Character, Location
 
-class LocalGenerateConceptView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+# Create your views here.
 
-    def post(self, request):
-        genre = request.data.get("genre")
-        ambiance = request.data.get("ambiance")
-        themes = request.data.get("themes")
-        references = request.data.get("references", "")
-
-        if not all([genre, ambiance, themes]):
-            return Response({"detail": "genre, ambiance, themes sont requis."},
-                            status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            sections = generate_concept_sections(genre, ambiance, themes, references)
-        except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-        concept = GameConcept.objects.create(
-            owner=request.user,
-            title="Concept sans nom",
+@login_required
+def create_game(request):
+    """Vue de création de concept de jeu"""
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        genre = request.POST.get('genre')
+        theme = request.POST.get('theme', '')
+        keywords = request.POST.get('keywords', '')
+        
+        # Créer le concept de jeu
+        game = GameConcept.objects.create(
+            title=title,
+            creator=request.user,
             genre=genre,
-            ambiance=ambiance,
-            themes=themes,
-            references=references,
-            universe=sections["universe"],
-            story=sections["story"],
-            characters=sections["characters"],
+            theme=theme,
+            keywords=keywords,
+            universe_description=f"Un jeu {genre} captivant. {theme}",
+            story="L'histoire de ce jeu sera générée par l'IA dans une prochaine version."
         )
+        
+        messages.success(request, f'Le jeu "{title}" a été créé avec succès !')
+        return redirect('game_detail', pk=game.id)
+    
+    context = {
+        'genre_choices': GameConcept.GENRE_CHOICES,
+    }
+    return render(request, 'studio/create.html', context)
 
-        return Response({
-            "id": concept.id,
-            "genre": genre,
-            "ambiance": ambiance,
-            "themes": themes,
-            "references": references,
-            **sections
-        }, status=status.HTTP_201_CREATED)
+
+def game_detail(request, pk):
+    """Page de détail d'un concept de jeu"""
+    game = get_object_or_404(GameConcept, pk=pk)
+    
+    # Vérifier si l'utilisateur a accès (public ou propriétaire)
+    if not game.is_public and game.creator != request.user:
+        messages.error(request, "Vous n'avez pas accès à ce jeu.")
+        return redirect('home')
+    
+    is_favorited = False
+    if request.user.is_authenticated:
+        is_favorited = game.favorited_by.filter(id=request.user.id).exists()
+    
+    context = {
+        'game': game,
+        'is_favorited': is_favorited,
+    }
+    return render(request, 'studio/detail.html', context)
+
+
+@login_required
+def dashboard(request):
+    """Tableau de bord personnel de l'utilisateur"""
+    user_games = GameConcept.objects.filter(creator=request.user)
+    
+    context = {
+        'user_games': user_games,
+    }
+    return render(request, 'studio/dashboard.html', context)
+
+
+@login_required
+def favorites(request):
+    """Page des favoris de l'utilisateur"""
+    favorite_games = request.user.favorite_games.all()
+    
+    context = {
+        'favorite_games': favorite_games,
+    }
+    return render(request, 'studio/favorites.html', context)
+
+
+@login_required
+def toggle_favorite(request, pk):
+    """Ajouter/retirer un jeu des favoris"""
+    game = get_object_or_404(GameConcept, pk=pk)
+    
+    if game.favorited_by.filter(id=request.user.id).exists():
+        game.favorited_by.remove(request.user)
+        messages.success(request, 'Jeu retiré des favoris.')
+    else:
+        game.favorited_by.add(request.user)
+        messages.success(request, 'Jeu ajouté aux favoris !')
+    
+    return redirect('game_detail', pk=pk)
+
+
+@login_required
+def toggle_visibility(request, pk):
+    """Basculer la visibilité public/privé d'un jeu"""
+    game = get_object_or_404(GameConcept, pk=pk, creator=request.user)
+    game.is_public = not game.is_public
+    game.save()
+    
+    status = "public" if game.is_public else "privé"
+    messages.success(request, f'Jeu passé en {status}.')
+    
+    return redirect('dashboard')
+
+
+@login_required
+def delete_game(request, pk):
+    """Supprimer un concept de jeu"""
+    game = get_object_or_404(GameConcept, pk=pk, creator=request.user)
+    
+    if request.method == 'POST':
+        title = game.title
+        game.delete()
+        messages.success(request, f'Le jeu "{title}" a été supprimé.')
+        return redirect('dashboard')
+    
+    return render(request, 'studio/delete_confirm.html', {'game': game})
