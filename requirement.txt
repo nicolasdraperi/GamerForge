@@ -1,0 +1,9 @@
+django
+torch
+torchvision
+torchaudio
+diffusers
+transformers
+accelerate
+safetensors
+pillow

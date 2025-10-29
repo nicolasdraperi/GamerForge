@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <body>
+    <h1>Génération Texte → Image</h1>
+
+    <form method="POST" action="/api/generate/">
+      <input
+        type="text"
+        name="prompt"
+        placeholder="un chat astronaute en 4k, style photo"
+        style="width:400px"
+      />
+      <button type="submit">Générer</button>
+    </form>
+
+    <p>Tu recevras du JSON avec l'URL de l'image générée.
+    Ensuite tu ouvres cette URL dans le navigateur.</p>
+  </body>
+</html>
