@@ -1,16 +1,27 @@
 # Python
 __pycache__/
 *.py[cod]
+*.pyc
+*.pyo
 *.egg-info/
+*.log
 
 # Venv
+venv/
 .venv/
 env/
+ENV/
 
 # Django
 db.sqlite3
+db.sqlite3-journal
 /staticfiles/
 /media/
+*.log
+local_settings.py
+
+# Migrations (garder __init__.py)
+**/migrations/0*.py
 
 # Env & secrets
 .env
@@ -19,3 +30,10 @@ db.sqlite3
 # IDE
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db

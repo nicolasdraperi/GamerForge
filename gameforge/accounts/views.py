@@ -1,25 +1,50 @@
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from .serializers import RegisterSerializer
+from django.shortcuts import render, redirect
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib import messages
 
-class RegisterView(APIView):
-    permission_classes = [AllowAny]
 
-    def post(self, request):
-        serializer = RegisterSerializer(data=request.data)
-        if serializer.is_valid():
-            user = serializer.save()
-            return Response(
-                {"id": user.id, "username": user.username, "email": user.email},
-                status=status.HTTP_201_CREATED,
-            )
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+def register_view(request):
+    """Vue d'inscription"""
+    if request.user.is_authenticated:
+        return redirect('home')
+    
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, 'Compte créé avec succès ! Bienvenue sur GameForge.')
+            return redirect('home')
+    else:
+        form = UserCreationForm()
+    
+    return render(request, 'accounts/register.html', {'form': form})
 
-class MeView(APIView):
-    permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        u = request.user
-        return Response({"id": u.id, "username": u.username, "email": u.email})
+def login_view(request):
+    """Vue de connexion"""
+    if request.user.is_authenticated:
+        return redirect('home')
+    
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                messages.success(request, f'Bon retour, {username} !')
+                return redirect('home')
+    else:
+        form = AuthenticationForm()
+    
+    return render(request, 'accounts/login.html', {'form': form})
+
+
+def logout_view(request):
+    """Vue de déconnexion"""
+    logout(request)
+    messages.info(request, 'Vous avez été déconnecté.')
+    return redirect('home')

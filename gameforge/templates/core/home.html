@@ -1,5 +1,75 @@
 {% extends "base.html" %}
+
+{% block title %}Accueil - GameForge{% endblock %}
+
 {% block content %}
-<h1>GameForge</h1>
-<p>Base Django minimale opérationnelle.</p>
+<div class="hero">
+  <h1>🎮 Créateur de Jeu Vidéo par IA</h1>
+  <p>Transformez vos idées en concepts de jeux vidéo complets grâce à l'intelligence artificielle</p>
+  {% if not user.is_authenticated %}
+    <div style="display: flex; gap: 1rem; justify-content: center;">
+      <a href="{% url 'register' %}" class="btn btn-primary">Commencer Gratuitement</a>
+      <a href="{% url 'login' %}" class="btn btn-secondary">Se Connecter</a>
+    </div>
+  {% else %}
+    <a href="{% url 'create_game' %}" class="btn btn-primary">Créer un Nouveau Jeu</a>
+  {% endif %}
+</div>
+
+<!-- Barre de recherche et filtres -->
+<div class="search-container">
+  <form method="GET" style="display: flex; gap: 1rem; width: 100%;">
+    <input 
+      type="text" 
+      name="search" 
+      class="search-input" 
+      placeholder="Rechercher un jeu..." 
+      value="{{ search_query }}"
+    >
+    <select name="genre" class="search-input" style="flex: 0 0 200px;" onchange="this.form.submit()">
+      <option value="">Tous les genres</option>
+      {% for value, label in genre_choices %}
+        <option value="{{ value }}" {% if genre_filter == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </form>
+</div>
+
+<!-- Section titre -->
+<div style="margin-bottom: 2rem;">
+  <h2 style="font-size: 2rem; color: var(--accent-gold);">🌟 Galerie des concepts</h2>
+  <p style="color: var(--text-gray);">Découvrez les jeux créés par la communauté</p>
+</div>
+
+<!-- Grille de jeux -->
+<div class="games-grid">
+  {% for game in games %}
+    <article class="game-card" onclick="window.location.href='{% url 'game_detail' game.id %}'">
+      {% if game.cover_image %}
+        <img src="{{ game.cover_image.url }}" alt="{{ game.title }}" class="game-card-image">
+      {% else %}
+        <div class="game-card-image"></div>
+      {% endif %}
+      
+      <div class="game-card-content">
+        <h3 class="game-card-title">{{ game.title }}</h3>
+        <span class="game-card-genre">{{ game.genre }}</span>
+        <p class="game-card-description">
+          {{ game.universe_description|truncatewords:20 }}
+        </p>
+        
+        <div class="game-card-footer">
+          <span class="game-card-author">Par {{ game.creator.username }}</span>
+          <span style="color: var(--accent-gold);">❤️ {{ game.favorite_count }}</span>
+        </div>
+      </div>
+    </article>
+  {% empty %}
+    <div style="grid-column: 1 / -1; text-align: center; padding: 4rem;">
+      <p style="font-size: 1.5rem; color: var(--text-gray);">
+        Aucun jeu n'a encore été créé. Soyez le premier ! 🚀
+      </p>
+    </div>
+  {% endfor %}
+</div>
 {% endblock %}

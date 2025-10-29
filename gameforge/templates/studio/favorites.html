@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Mes Favoris - GameForge{% endblock %}
+
+{% block content %}
+<div class="hero" style="padding: 2rem;">
+  <h1>❤️ Mes Favoris</h1>
+  <p>Les concepts de jeux que vous adorez</p>
+</div>
+
+{% if favorite_games %}
+  <div style="margin-bottom: 2rem;">
+    <h2 style="color: var(--accent-gold);">{{ favorite_games|length }} jeu{{ favorite_games|length|pluralize:" x" }} favori{{ favorite_games|length|pluralize }}</h2>
+  </div>
+
+  <div class="games-grid">
+    {% for game in favorite_games %}
+      <article class="game-card" onclick="window.location.href='{% url 'game_detail' game.id %}'">
+        {% if game.cover_image %}
+          <img src="{{ game.cover_image.url }}" alt="{{ game.title }}" class="game-card-image">
+        {% else %}
+          <div class="game-card-image"></div>
+        {% endif %}
+        
+        <div class="game-card-content">
+          <h3 class="game-card-title">{{ game.title }}</h3>
+          <span class="game-card-genre">{{ game.genre }}</span>
+          <p class="game-card-description">
+            {{ game.universe_description|truncatewords:20 }}
+          </p>
+          
+          <div class="game-card-footer">
+            <span class="game-card-author">Par {{ game.creator.username }}</span>
+            <span style="color: var(--accent-gold);">❤️ {{ game.favorite_count }}</span>
+          </div>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+{% else %}
+  <div style="text-align: center; padding: 4rem; background: var(--bg-card); border-radius: 16px;">
+    <div style="font-size: 4rem; margin-bottom: 1rem;">💔</div>
+    <h3 style="color: var(--accent-gold); margin-bottom: 1rem;">Aucun favori pour le moment</h3>
+    <p style="color: var(--text-gray); margin-bottom: 2rem;">
+      Explorez la galerie et ajoutez des jeux à vos favoris !
+    </p>
+    <a href="{% url 'home' %}" class="btn btn-primary">🌟 Découvrir des jeux</a>
+  </div>
+{% endif %}
+{% endblock %}
+

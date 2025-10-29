@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Inscription - GameForge{% endblock %}
+
+{% block content %}
+<div class="form-container">
+  <div class="form-header">
+    <h2>🎮 Créer un compte</h2>
+    <p style="color: var(--text-gray);">Rejoignez GameForge et créez vos jeux !</p>
+  </div>
+
+  <form method="POST">
+    {% csrf_token %}
+    
+    {% if form.errors %}
+      <div class="alert alert-error" style="margin-bottom: 1.5rem;">
+        {% for field, errors in form.errors.items %}
+          {% for error in errors %}
+            <p>{{ error }}</p>
+          {% endfor %}
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="form-group">
+      <label for="id_username">Nom d'utilisateur</label>
+      {{ form.username }}
+    </div>
+
+    <div class="form-group">
+      <label for="id_password1">Mot de passe</label>
+      {{ form.password1 }}
+    </div>
+
+    <div class="form-group">
+      <label for="id_password2">Confirmer le mot de passe</label>
+      {{ form.password2 }}
+    </div>
+
+    <button type="submit" class="btn btn-primary" style="width: 100%;">
+      S'inscrire
+    </button>
+
+    <p style="text-align: center; margin-top: 1.5rem; color: var(--text-gray);">
+      Déjà un compte ? <a href="{% url 'login' %}" style="color: var(--accent-gold);">Se connecter</a>
+    </p>
+  </form>
+</div>
+{% endblock %}
+
