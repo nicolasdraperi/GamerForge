@@ -5,11 +5,11 @@
 {% block content %}
 <div class="form-container" style="max-width: 900px;">
   <div class="form-header">
-    <h2>🎨 Créateur de Jeu Vidéo</h2>
+    <h2>Créateur de Jeu Vidéo</h2>
     <p style="color: var(--text-gray);">Remplissez le formulaire et laissez l'IA créer votre concept de jeu</p>
   </div>
 
-  <form method="POST" id="createGameForm">
+  <form method="POST" id="createGameForm" action="{% url 'create_game' %}">
     {% csrf_token %}
     
     <div class="form-group">
@@ -26,7 +26,7 @@
     <div class="form-group">
       <label for="genre">Genre</label>
       <select id="genre" name="genre" required>
-        <option value="">-- Sélectionnez un genre --</option>
+        <option value="" selected disabled>-- Sélectionnez un genre --</option>
         {% for value, label in genre_choices %}
           <option value="{{ value }}">{{ label }}</option>
         {% endfor %}
@@ -34,31 +34,43 @@
     </div>
 
     <div class="form-group">
-      <label for="theme">Thème / Ambiance</label>
-      <textarea 
-        id="theme" 
-        name="theme" 
-        placeholder="Ex: Un monde post-apocalyptique où la nature a repris ses droits..."
-        rows="4"
-      ></textarea>
+      <label for="ambiance">Ambiance visuelle et narrative</label>
+      <input
+        type="text"
+        id="ambiance"
+        name="ambiance"
+        placeholder="Ex: dark fantasy, cyberpunk, post-apocalyptique"
+        required
+      >
     </div>
 
     <div class="form-group">
-      <label for="keywords">Mots-clés thématiques</label>
+      <label for="themes">Mots-clés thématiques</label>
       <input 
         type="text" 
-        id="keywords" 
-        name="keywords" 
+        id="themes" 
+        name="themes" 
         placeholder="Ex: boucle temporelle, vengeance, IA rebelle"
+        required
       >
       <small style="color: var(--text-gray); font-size: 0.875rem;">
         Séparez les mots-clés par des virgules
       </small>
     </div>
 
+    <div class="form-group">
+      <label for="references">Références culturelles (facultatif)</label>
+      <input 
+        type="text" 
+        id="references" 
+        name="references" 
+        placeholder="Ex: Zelda, Hollow Knight, Disco Elysium"
+      >
+    </div>
+
     <div style="display: flex; gap: 1rem;">
       <button type="submit" class="btn btn-primary" style="flex: 1;">
-        ✨ Générer le concept
+        Générer le concept
       </button>
       <a href="{% url 'home' %}" class="btn btn-secondary">
         Annuler
@@ -67,14 +79,22 @@
   </form>
 
   <div id="loadingIndicator" style="display: none; text-align: center; margin-top: 2rem;">
-    <div style="font-size: 3rem; animation: spin 2s linear infinite;">⚙️</div>
+    <div class="spinner" aria-hidden="true"></div>
     <p style="color: var(--accent-gold); font-size: 1.25rem; margin-top: 1rem;">
-      Génération en cours... L'IA travaille sur votre concept !
+      Génération en cours... merci de patienter.
     </p>
   </div>
 </div>
 
 <style>
+  .spinner {
+    width: 48px; height: 48px;
+    border: 4px solid rgba(255,255,255,.2);
+    border-top-color: rgba(255,255,255,.9);
+    border-radius: 50%;
+    margin: 0 auto;
+    animation: spin 1s linear infinite;
+  }
   @keyframes spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
@@ -82,10 +102,16 @@
 </style>
 
 <script>
-  document.getElementById('createGameForm').addEventListener('submit', function() {
-    document.getElementById('loadingIndicator').style.display = 'block';
-    this.style.display = 'none';
+  const form = document.getElementById('createGameForm');
+  const loading = document.getElementById('loadingIndicator');
+
+  form.addEventListener('submit', function () {
+    loading.style.display = 'block';
+    form.querySelectorAll('button[type="submit"]').forEach(b => b.disabled = true);
+    form.style.pointerEvents = 'none';
+    loading.style.pointerEvents = 'auto';
   });
 </script>
-{% endblock %}
 
+
+{% endblock %}
