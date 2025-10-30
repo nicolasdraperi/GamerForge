@@ -22,9 +22,11 @@
 - [Contributeurs](#-contributeurs)
 
 ---
+## schéma de la transitions des données
 
 <img width="830" height="464" alt="image" src="https://github.com/user-attachments/assets/7f6b3d8f-c17c-4da9-bfe2-00fd54ab0f54" />
 
+---
 
 ## ✨ Fonctionnalités
 
@@ -426,4 +428,5 @@ Pour toute question ou problème :
 ---
 
 **Fait avec ❤️ et 🤖 IA**
+
 
