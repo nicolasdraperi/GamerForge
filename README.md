@@ -413,27 +413,24 @@ Ce projet est développé à des fins éducatives dans le cadre d'un TP IPSSI.
 - 💾 Les modèles IA prennent ~6-8 GB d'espace disque
 - 🖥️ La génération d'image sur CPU est lente (~30-60s)
 
+## Bonus implémenté
+
+- Systeme de favoris (tout le monde peut voir combient de personne ont ajouté tel jeu en favoris)
+- Barre de recherche 
+- Pop-Up de chargement lors de la generation IA
+
 ## 🚀 Améliorations futures
 
 - [ ] Export PDF des concepts de jeu
 - [ ] Système de notation/commentaires
 - [ ] Génération de plusieurs images par concept
 - [ ] Support de plus de modèles IA
-- [ ] Mode "exploration libre" (génération aléatoire complète)
 - [ ] Game Design Document (GDD) complet
 - [ ] Partage sur réseaux sociaux
 
 ---
 
-## 📞 Support
 
-Pour toute question ou problème :
-- 📧 Email : [contact@example.com](mailto:contact@example.com)
-- 🐛 Issues : [GitHub Issues](https://github.com/nicolasdraperi/GamerForge/issues)
-
----
-
-**Fait avec ❤️ et 🤖 IA**
 
 
 
