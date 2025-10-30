@@ -7,6 +7,11 @@
   <div class="form-header">
     <h2>Créateur de Jeu Vidéo</h2>
     <p style="color: var(--text-gray);">Remplissez le formulaire et laissez l'IA créer votre concept de jeu</p>
+    
+    
+    <button type="button" id="randomBtn" class="btn-random">
+      🎲 Surprise ! (Mode Aléatoire)
+    </button>
   </div>
 
   <form method="POST" id="createGameForm" action="{% url 'create_game' %}">
@@ -313,6 +318,45 @@
     font-size: 0.875rem;
     opacity: 0.8;
   }
+  
+
+  .btn-random {
+    margin-top: 1.5rem;
+    padding: 0.875rem 2rem;
+    background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(78, 205, 196, 0.4);
+    display: inline-block;
+  }
+  
+  .btn-random:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 6px 25px rgba(78, 205, 196, 0.6);
+  }
+  
+  .btn-random:active {
+    transform: translateY(-1px) scale(0.98);
+  }
+  
+  @keyframes fillIn {
+    0% {
+      background-color: rgba(78, 205, 196, 0.2);
+      transform: scale(1.02);
+    }
+    50% {
+      background-color: rgba(78, 205, 196, 0.3);
+    }
+    100% {
+      background-color: var(--bg-input);
+      transform: scale(1);
+    }
+  }
 </style>
 
 <script>
@@ -353,7 +397,7 @@
       const steps = stepDuration / updateInterval;
       const increment = progressDiff / steps;
       
-      // Activer l'étape correspondante
+      
       if (target.step !== currentStep) {
         if (currentStep > 0) {
           document.getElementById(`step${currentStep}`).classList.remove('active');
@@ -402,6 +446,73 @@
       simulateProgress();
     }, 300);
   });
+
+  
+  const randomBtn = document.getElementById('randomBtn');
+  
+  
+  const randomData = {
+    titles: [
+      "Chroniques d'Éternité", "L'Ombre du Nexus", "Royaume Fracturé", 
+      "Échos du Vide", "Sentinelles Oubliées", "La Chute des Titans",
+      "Révolution Mécanique", "Légendes Perdues", "Aube Sanglante",
+      "Destinée Forgée", "L'Appel du Chaos", "Rêves Brisés"
+    ],
+    genres: ["RPG", "FPS", "Strategy", "Adventure", "Platformer", "Puzzle", "Metroidvania", "Visual Novel", "Dark Fantasy"],
+    ambiances: [
+      "dark fantasy médiévale", "cyberpunk dystopique", "post-apocalyptique",
+      "steampunk victorien", "space opera futuriste", "horreur lovecraftienne",
+      "médiéval fantastique coloré", "néon rétro années 80", "western sombre",
+      "monde onirique surréaliste", "thriller psychologique", "fantasy asiatique"
+    ],
+    themes: [
+      "vengeance, trahison, rédemption", "boucle temporelle, destin, sacrifice",
+      "IA rebelle, transhumanisme, liberté", "survie, espoir, communauté",
+      "corruption, pouvoir, choix moraux", "mémoire, identité, réalité",
+      "magie interdite, prophétie, guerre", "solitude, exploration, mystère",
+      "révolution, oppression, héroïsme", "mort, résurrection, immortalité"
+    ],
+    references: [
+      "Dark Souls, Bloodborne", "Cyberpunk 2077, Deus Ex", "The Last of Us, Metro",
+      "Bioshock, Dishonored", "Hollow Knight, Celeste", "Silent Hill, Resident Evil",
+      "Zelda, Skyrim", "Persona, Final Fantasy", "Witcher, Dragon Age",
+      "Control, Alan Wake", "Hades, Dead Cells", "Outer Wilds, Subnautica"
+    ]
+  };
+  
+  function getRandomElement(array) {
+    return array[Math.floor(Math.random() * array.length)];
+  }
+  
+  function fillRandomData() {
+    
+    randomBtn.style.transform = 'scale(0.95)';
+    randomBtn.textContent = '🎲 Génération...';
+    
+    setTimeout(() => {
+      
+      document.getElementById('title').value = getRandomElement(randomData.titles);
+      document.getElementById('genre').value = getRandomElement(randomData.genres);
+      document.getElementById('ambiance').value = getRandomElement(randomData.ambiances);
+      document.getElementById('themes').value = getRandomElement(randomData.themes);
+      document.getElementById('references').value = getRandomElement(randomData.references);
+      
+      
+      const inputs = form.querySelectorAll('input[type="text"], select');
+      inputs.forEach((input, index) => {
+        input.style.animation = 'none';
+        setTimeout(() => {
+          input.style.animation = 'fillIn 0.4s ease-out';
+        }, index * 100);
+      });
+      
+      
+      randomBtn.style.transform = 'scale(1)';
+      randomBtn.textContent = '🎲 Surprise ! (Mode Aléatoire)';
+    }, 500);
+  }
+  
+  randomBtn.addEventListener('click', fillRandomData);
 </script>
 
 
