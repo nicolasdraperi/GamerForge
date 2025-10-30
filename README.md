@@ -367,19 +367,21 @@ class Location(models.Model):
 ## 📸 Screenshots
 
 ### Page d'accueil
-![Home Page](docs/screenshots/home.png)
+<img width="1893" height="865" alt="image" src="https://github.com/user-attachments/assets/8f607929-f90e-42d1-9b87-da562d0bfe76" />
 *Galerie de concepts avec recherche et filtres*
 
 ### Formulaire de création
-![Create Form](docs/screenshots/create.png)
+<img width="802" height="746" alt="image" src="https://github.com/user-attachments/assets/e5110be8-58e1-4bb4-a561-5fa5d3ea3f6f" />
+<img width="515" height="566" alt="image" src="https://github.com/user-attachments/assets/ef44d3b6-07bf-4994-9618-5e783e81f19e" />
 *Interface de création guidée avec barre de progression*
 
 ### Détail d'un jeu
-![Game Detail](docs/screenshots/detail.png)
+<img width="951" height="690" alt="image" src="https://github.com/user-attachments/assets/1ec3994a-7f3f-4b55-9f65-77accefa2562" />
+<img width="886" height="713" alt="image" src="https://github.com/user-attachments/assets/de81cd59-511a-44f3-826f-3e131eafc8c2" />
 *Vue complète : univers, histoire, personnages, lieux*
 
 ### Tableau de bord
-![Dashboard](docs/screenshots/dashboard.png)
+<img width="994" height="704" alt="image" src="https://github.com/user-attachments/assets/b0819d27-e979-4444-b816-82389155757b" />
 *Gestion personnelle des créations*
 
 ---
@@ -428,5 +430,6 @@ Pour toute question ou problème :
 ---
 
 **Fait avec ❤️ et 🤖 IA**
+
 
 
