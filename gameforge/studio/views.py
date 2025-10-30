@@ -49,9 +49,13 @@ def game_detail(request, pk):
     if request.user.is_authenticated:
         is_favorited = game.favorited_by.filter(id=request.user.id).exists()
     
+    # Splitter les mots-clés pour l'affichage
+    keywords_list = [kw.strip() for kw in game.keywords.split(',')] if game.keywords else []
+    
     context = {
         'game': game,
         'is_favorited': is_favorited,
+        'keywords_list': keywords_list,
     }
     return render(request, 'studio/detail.html', context)
 
