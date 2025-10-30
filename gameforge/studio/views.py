@@ -133,6 +133,23 @@ def create_game(request):
 
         keywords = themes if not references else f"{themes}, {references}"
 
+        
+        generated_image_path = None
+        try:
+            from . import state
+            if state.generator:
+                prompt = f"{genre} game, {ambiance}, {themes}, fantasy art, concept art, high quality"
+                file_url = state.generator.generate(prompt)  
+              
+                if file_url:
+                    import os
+                    from django.conf import settings
+                
+                    generated_image_path = os.path.join(settings.BASE_DIR, file_url.lstrip('/'))
+        except Exception as e:
+            print(f"Erreur génération image: {e}")
+            
+
         with transaction.atomic():
             game = GameConcept.objects.create(
                 creator=request.user,
@@ -143,6 +160,17 @@ def create_game(request):
                 universe_description=universe_text,
                 story=story_text,
             )
+            
+        
+            if generated_image_path and os.path.exists(generated_image_path):
+                from django.core.files import File
+                import shutil
+                with open(generated_image_path, 'rb') as f:
+                    game.cover_image.save(
+                        f"cover_{game.id}.png",
+                        File(f),
+                        save=True
+                    )
             for ch in _iter_characters(data.get("characters") or data.get("personnages") or []):
                 Character.objects.create(
                     game_concept=game,
